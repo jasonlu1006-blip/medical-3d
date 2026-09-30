@@ -1,0 +1,94 @@
+{
+  "verified_at": "2026-09-30",
+  "status": "local prototype tested; no remote publication",
+  "engine": "NiiVue 0.58.0",
+  "unit_tests": {
+    "passed": 7,
+    "job_manifest": "/Volumes/EXTERNALSSD/FORGE/runtime/jobs/2026-09-30T105030-348d88b64a4d/manifest.json"
+  },
+  "browser_checks": [
+    "synthetic volume",
+    "two separate display-stack dates",
+    "study replacement without retaining phantom",
+    "slice slider",
+    "3D rendering",
+    "four-view layout",
+    "clipping enable and depth",
+    "local .m3d file selection",
+    "synthetic NIfTI-1 import",
+    "invalid .m3d rejected, previous image retained"
+  ],
+  "viewports": [
+    [
+      1180,
+      820
+    ],
+    [
+      820,
+      1180
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "ipad_hardware_tested": false,
+  "actual_touch_gestures_tested": false,
+  "physical_geometry_validated": false,
+  "surgery_simulation_implemented": false,
+  "http_checks": {
+    "lan_get": "passed",
+    "catalog_entries": 2,
+    "project_json": 404,
+    "traversal": 404,
+    "unknown_data": 404
+  },
+  "network_policy": "runtime self-hosted library; CSP connect-src self; server has no upload endpoint",
+  "files": [
+    {
+      "path": "web/index.html",
+      "bytes": 3769,
+      "sha256": "2d1b5254170dae486b7384ac7bd9ed88724290b678bbb61ab5bbab95b70dc091"
+    },
+    {
+      "path": "web/.nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "web/style.css",
+      "bytes": 6152,
+      "sha256": "0874a09e58b4cc358db7629599ff6e1f99ca12e37db2379051ae94d6d30fac84"
+    },
+    {
+      "path": "web/app.js",
+      "bytes": 12632,
+      "sha256": "5ac20bc642d6c820ec382341fa5dd8309971902611fddeec01f182c210222b94"
+    },
+    {
+      "path": "web/vendor/NIIVUE-LICENSE.txt",
+      "bytes": 1316,
+      "sha256": "604be23eceeef93996165e2cd46eefd4d713f98f1b4a5414ab109516dc1b30bf"
+    },
+    {
+      "path": "web/vendor/niivue-0.58.0.js",
+      "bytes": 2824071,
+      "sha256": "fc637d3b73d7937c7fb20a248f3b462daa68801739477ee7077e9285537e1f22"
+    },
+    {
+      "path": "code/prepare_display_stack.py",
+      "bytes": 3741,
+      "sha256": "88a9b2153852b8afa95a36dd7f9154332695d2608e6da18af948e1a8f55961c8"
+    },
+    {
+      "path": "code/test_integrity.py",
+      "bytes": 2974,
+      "sha256": "a4ddc79e7fe7ef6c5f0842db886d40c9311ee744c7e2138ae9500c261a37bb22"
+    },
+    {
+      "path": "code/serve.py",
+      "bytes": 3154,
+      "sha256": "20fd2d6602d85cb1e2b93e94fcdcc9895c0b1489766ad687385d70d68318db06"
+    }
+  ]
+}

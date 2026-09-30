@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-09-30",
+  "status": "candidate review only; no installation or execution",
+  "source": "GitHub repository and commits/main APIs",
+  "size_note": "GitHub repository size KiB is not installation/download footprint; dependency budgets remain pending",
+  "candidates": [
+    {
+      "repository": "https://github.com/pieper/slicer-skill",
+      "observed_main_commit": "c3b9f3bbc2b95938e73f1ad0c2e6c01a8fd2e32f",
+      "license": "Apache-2.0",
+      "pushed_at": "2026-09-17T14:09:15Z",
+      "archived": false,
+      "repository_size_KiB": 172
+    },
+    {
+      "repository": "https://github.com/Slicer/SlicerSOFA",
+      "observed_main_commit": "1e45a2221fbaf3418f00190d7d05ebd23d111a2c",
+      "license": "MIT",
+      "pushed_at": "2026-09-29T08:53:02Z",
+      "archived": false,
+      "repository_size_KiB": 8314
+    },
+    {
+      "repository": "https://github.com/Kitware/VolView",
+      "observed_main_commit": "90d8a81a354c3d64732a5f2372bdedcf020b7032",
+      "license": "Apache-2.0",
+      "pushed_at": "2026-09-30T01:19:51Z",
+      "archived": false,
+      "repository_size_KiB": 70155
+    },
+    {
+      "repository": "https://github.com/niivue/niivue",
+      "observed_main_commit": "ee9aefce6ce006a8b1a466434cc0d7ba2ac58344",
+      "license": "BSD-2-Clause",
+      "pushed_at": "2026-08-18T15:49:28Z",
+      "archived": false,
+      "repository_size_KiB": 665239
+    }
+  ]
+}

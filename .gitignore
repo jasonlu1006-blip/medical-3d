@@ -1,0 +1,19 @@
+# Case data are kept outside this repository.
+sources/
+derived/
+deliverables/
+runtime/
+project.json
+evidence/onboarding.json
+*.m3d
+*.nii
+*.nii.gz
+*.dcm
+*.dicom
+*.nrrd
+*.zip
+*.png
+*.jpg
+*.jpeg
+__pycache__/
+.DS_Store

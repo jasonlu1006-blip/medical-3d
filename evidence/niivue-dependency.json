@@ -1,0 +1,31 @@
+{
+  "package": "@niivue/niivue",
+  "version": "0.58.0",
+  "source": "https://registry.npmjs.org/@niivue/niivue/-/niivue-0.58.0.tgz",
+  "git_commit": "298ffbcd360fda57aa2014293bd19787350f2f97",
+  "npm_integrity": "sha512-aHDAGB/LUt6yUpR6t4u+0QSfWxVQclnFOEKQOqSm4dDhvu7vlYQBT2v+OUmnibie11l6Wl8v6eS0ENQtS3OWmw==",
+  "download_bytes": 5710519,
+  "license_source": "https://raw.githubusercontent.com/niivue/niivue/298ffbcd360fda57aa2014293bd19787350f2f97/LICENSE",
+  "license": "BSD-2-Clause",
+  "dependencies_bundled": {
+    "fflate": "^0.8.2",
+    "zarrita": "^0.5.0",
+    "gl-matrix": "^3.4.3",
+    "array-equal": "^1.0.2",
+    "@lukeed/uuid": "^2.0.1",
+    "nifti-reader-js": "^0.8.0",
+    "@ungap/structured-clone": "^1.2.0"
+  },
+  "data_flow": "Local vendored library; no CDN runtime requests; no patient uploads.",
+  "files": [
+    {
+      "file": "NIIVUE-LICENSE.txt",
+      "sha256": "604be23eceeef93996165e2cd46eefd4d713f98f1b4a5414ab109516dc1b30bf"
+    },
+    {
+      "file": "niivue-0.58.0.js",
+      "sha256": "fc637d3b73d7937c7fb20a248f3b462daa68801739477ee7077e9285537e1f22"
+    }
+  ],
+  "bundle_entry": "package/dist/index.js (self-contained browser ES module)"
+}

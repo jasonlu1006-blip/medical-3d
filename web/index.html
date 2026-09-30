@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="theme-color" content="#101a20"><title>Medical 3D · 影像工作台</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="locked">
+  <div id="login" class="login-screen"><form id="loginForm" class="login-card">
+    <div class="eyebrow">MEDICAL 3D</div><h2>開啟影像工作台</h2><p>輸入帳號密碼，解鎖 MRI 示範影像。</p>
+    <label for="username">帳號</label><input id="username" autocomplete="username" autocapitalize="characters" required>
+    <label for="password">密碼</label><input id="password" type="password" autocomplete="current-password" required>
+    <button id="unlock" class="button" type="submit">解鎖影像</button><p id="loginStatus" role="status" aria-live="polite">影像在此裝置解密，重新整理後需再次解鎖。</p>
+  </form></div>
+  <header><a class="brand" href="./"><span class="brand-icon">◈</span> MEDICAL <b>3D</b></a><span class="edition">影像工作台 <small>PREVIEW 01</small></span><button id="openFile" class="button">＋ 開啟影像檔</button><button id="lock" class="text-button" hidden>鎖定</button><input id="file" type="file" accept=".m3d,.nii" hidden></header>
+  <main>
+    <aside>
+      <div class="eyebrow">WORKSPACE</div><h1>從切片，<br>看見立體。</h1><p class="intro">探索影像、調整剖面，<br>從不同視角理解空間。</p>
+      <section><label for="dataset">影像資料</label><select id="dataset"><option value="phantom">合成幾何 · 功能測試</option></select><div class="meta"><span id="dimensions">—</span><span id="kind">合成測試</span></div></section>
+      <section><div class="section-title">顯示方式</div><div class="segmented" id="modes"><button data-mode="4" class="active">立體</button><button data-mode="0">切片</button><button data-mode="3">四視窗</button></div></section>
+      <section class="controls"><div class="section-title">影像調整 <button class="text-button" id="reset">重設</button></div>
+        <label for="slice">切片位置 <output id="sliceValue">—</output></label><input id="slice" type="range" min="0" max="100" value="50">
+        <label for="contrast">亮度下限 <output id="contrastValue">25</output></label><input id="contrast" type="range" min="0" max="240" value="25">
+        <label for="ceiling">亮度上限 <output id="ceilingValue">220</output></label><input id="ceiling" type="range" min="1" max="255" value="220">
+        <label for="opacity">不透明度 <output id="opacityValue">100%</output></label><input id="opacity" type="range" min="5" max="100" value="100">
+      </section>
+      <section><div class="section-title">探索剖面 <label class="switch"><input id="clipEnabled" type="checkbox" aria-label="開啟剖切"><span></span></label></div><input aria-label="剖切深度" id="clip" type="range" min="-140" max="140" value="0" disabled><p class="hint">開啟後滑動，查看體積內部。</p></section>
+      <details><summary>這份影像的限制</summary><p id="details">合成幾何，只用於驗證顯示與操作。</p><p>本版尚未提供組織分割、手術路徑或力學模擬。重採樣切面不增加原始影像資訊。</p></details>
+      <footer>裝置內顯示 · 本機選檔不會上傳<br><a href="vendor/NIIVUE-LICENSE.txt">NiiVue 0.58.0</a></footer>
+    </aside>
+    <div class="workspace">
+      <div class="viewer-top"><div><span class="dot"></span><span id="title">合成幾何 · 功能測試</span></div><span id="state" role="status" aria-live="polite">準備顯示引擎</span></div>
+      <div class="canvas-wrap"><canvas id="gl" aria-label="可互動的三維影像"></canvas><div id="empty" hidden></div><div class="view-label" id="viewLabel">3D VOLUME</div><div class="canvas-note" id="canvasNote">合成幾何 · 非病例影像</div><div class="quick-views"><button data-view="front">正面視角</button><button data-view="side">側面視角</button><button data-view="top">頂部視角</button></div></div>
+      <div class="viewer-bottom"><span>單指拖曳旋轉 · 雙指縮放</span><span id="resolution">—</span></div>
+      <div class="notice"><span>◉</span><p id="notice">合成幾何供功能測試。可從左側選擇本機病例，或開啟 .m3d／未壓縮 .nii 檔。</p></div>
+    </div>
+  </main>
+  <script type="module" src="app.js"></script>
+</body></html>
