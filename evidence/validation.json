@@ -1,6 +1,6 @@
 {
-  "verified_at": "2026-09-30",
-  "status": "GitHub Pages published; encrypted demo and live browser checks passed",
+  "verified_at": "2026-10-01",
+  "status": "Preview 02 published; local rendering verified and HTTPS assets matched",
   "engine": "NiiVue 0.58.0",
   "unit_tests": {
     "passed": 7,
@@ -52,8 +52,8 @@
     },
     {
       "path": "web/app.js",
-      "bytes": 13746,
-      "sha256": "4e73a9ee77fc9224d87b21da09370cc02644c130a6e98ea1938713db8e96f7df"
+      "bytes": 15519,
+      "sha256": "9d1a0263910cdafe7a45c70963114f7db12e0485fe421406aa1571dd3e6dd2c4"
     },
     {
       "path": "web/catalog.json",
@@ -62,13 +62,13 @@
     },
     {
       "path": "web/index.html",
-      "bytes": 4832,
-      "sha256": "5f1474f75847dc00277ca8dbf90a837038964565ae23c079d64b7a012d31f469"
+      "bytes": 5666,
+      "sha256": "81346778f49f5c1d033d44448fed716eb69d7ab8c975df7b43cf956afb136217"
     },
     {
       "path": "web/style.css",
-      "bytes": 6877,
-      "sha256": "7442876254d2ec2a66787cc3e57638415104814d97626c911ccdffb4f098b6b3"
+      "bytes": 8142,
+      "sha256": "2422b157205e0fa7614c4caee508e51b9902fcd33ce0f8ad8821cbd06b01057b"
     },
     {
       "path": "web/unlock.js",
@@ -109,7 +109,7 @@
   "deployment": {
     "url": "https://jasonlu1006-blip.github.io/medical-3d/",
     "branch": "gh-pages",
-    "commit": "7bbcfc9d945223f79dcd166f5ef238e771897897",
+    "commit": "ebb0e6eea5da99cb3a5879cdeaa527b719214333",
     "pages_status": "built",
     "encryption": "AES-256-GCM; PBKDF2-SHA256 600000; random 16-byte salt and 12-byte IV",
     "credentials_persisted": false,
@@ -117,20 +117,20 @@
     "assets": [
       {
         "path": "index.html",
-        "bytes": 4832,
-        "sha256": "5f1474f75847dc00277ca8dbf90a837038964565ae23c079d64b7a012d31f469",
+        "bytes": 5666,
+        "sha256": "81346778f49f5c1d033d44448fed716eb69d7ab8c975df7b43cf956afb136217",
         "matches": true
       },
       {
         "path": "app.js",
-        "bytes": 13746,
-        "sha256": "4e73a9ee77fc9224d87b21da09370cc02644c130a6e98ea1938713db8e96f7df",
+        "bytes": 15519,
+        "sha256": "9d1a0263910cdafe7a45c70963114f7db12e0485fe421406aa1571dd3e6dd2c4",
         "matches": true
       },
       {
         "path": "style.css",
-        "bytes": 6877,
-        "sha256": "7442876254d2ec2a66787cc3e57638415104814d97626c911ccdffb4f098b6b3",
+        "bytes": 8142,
+        "sha256": "2422b157205e0fa7614c4caee508e51b9902fcd33ce0f8ad8821cbd06b01057b",
         "matches": true
       },
       {
@@ -174,6 +174,30 @@
       "390x844 phone and 820x1180 tablet layouts",
       "no browser error logs"
     ],
-    "hardware_tested": false
+    "hardware_tested": false,
+    "browser_checks_verified_at": "2026-09-30 (initial encrypted login flow)",
+    "asset_hashes_verified_at": "2026-10-01"
+  },
+  "display_fix": {
+    "default": "source slice; no opaque outer-head start",
+    "modes": [
+      "internal intersecting planes",
+      "central volume cutaway",
+      "source slice",
+      "four-view with internal planes"
+    ],
+    "local_browser_checks": [
+      "both selected MRI dates render",
+      "three slice-position sliders update",
+      "cutaway switches axis and depth",
+      "source-slice mode exposes brain image",
+      "reset restores source slice",
+      "phone 390x844",
+      "tablet 820x1180",
+      "no console errors"
+    ],
+    "source_and_encrypted_bundle_unchanged": true,
+    "segmentation_implemented": false,
+    "live_login_retested": false
   }
 }

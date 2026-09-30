@@ -123,7 +123,7 @@ async function show(data) {
   $('notice').textContent = data.notice; $('details').textContent = data.notice;
   $('canvasNote').textContent = data.note;
   $('slice').max=data.dims[2]-1; $('slice').value=Math.floor(data.dims[2]/2);
-  reset();
+  await reset();
   document.title = 'Medical 3D · 影像工作台';
   document.body.dataset.ready = 'true';
   status('已載入 · 本機顯示');
@@ -132,22 +132,43 @@ async function show(data) {
 async function guarded(work) {
   if (loading) return;
   loading=true; $('dataset').disabled=true; $('openFile').disabled=true;
-  const controls=[...document.querySelectorAll('aside input, aside button, .quick-views button')];
+  const controls=[...document.querySelectorAll('aside input, aside button, #cutControls input, #cutControls select, #cutControls button, #modes button, .slice-navigation input, .quick-views button')];
   controls.forEach(c=>c.disabled=true);
   try { await work(); } catch(e) { failure(e); }
-  finally {loading=false;$('dataset').disabled=false;$('openFile').disabled=false;controls.forEach(c=>c.disabled=false);$('clip').disabled=!$('clipEnabled').checked;}
+  finally {loading=false;$('dataset').disabled=false;$('openFile').disabled=false;controls.forEach(c=>c.disabled=false);}
 }
 
-function mode(value) {
-  nv.setSliceType(value);
-  document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',Number(b.dataset.mode)===value));
-  $('viewLabel').textContent=({4:'3D VOLUME',0:'SLICE STACK',3:'MULTIPLANAR + 3D'})[value];
-}
-function slice() {
-  if(!current)return;
-  nv.scene.crosshairPos[2]=Number($('slice').value)/Math.max(1,current.dims[2]-1);
-  $('sliceValue').textContent=`${Number($('slice').value)+1} / ${current.dims[2]}`;
+const cutViews = [[0,0],[90,0],[0,90]];
+async function mode(value) {
+  const internal=value==='planes'||value==='multi';
+  await nv.setVolumeRenderIllumination(internal?-1:0);
+  nv.setSliceType(value==='slice'?0:value==='multi'?3:4);
+  document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===value));
+  $('viewLabel').textContent=({planes:'3D INTERNAL PLANES',cut:'VOLUME CUTAWAY',slice:'SOURCE SLICE',multi:'INTERNAL PLANES + SLICES'})[value];
+  $('modeHelp').textContent=({planes:'三個內部切面可旋轉；下方滑桿移動切面，查看腦內影像。',cut:'已移除半側體積。可調剖切方向與深度；尚未進行腦部分割。',slice:'直接查看原切片方向的影像，滑動下方「原切片位置」逐張查看。',multi:'點選切片移動交點，同時對照三個重切面與立體切面。'})[value];
+  $('gestureHelp').textContent=value==='slice'?'點選移動交點 · 下方滑桿換片':'單指拖曳旋轉 · 雙指縮放';
+  $('cutControls').hidden=value!=='cut';
+  document.querySelector('.quick-views').hidden=value==='slice';
+  document.querySelector('.slice-navigation').hidden=value==='cut';
+  if(internal)nv.setRenderAzimuthElevation(120,40);
+  document.querySelectorAll('.reslice-control').forEach(el=>el.hidden=value==='slice'||value==='cut');
+  // A camera-facing central clip is enabled whenever cutaway is selected.
+  if(value==='cut'){clipping();faceCut();}else{nv.setClipPlane([2,0,0]);}
   nv.drawScene();
+}
+function syncSlices() {
+  if(!current)return;
+  for(const [id,axis] of [['slice',2],['sliceX',0],['sliceY',1]]){
+    const maximum=current.dims[axis]-1;
+    const value=Math.max(0,Math.min(maximum,Math.round(nv.scene.crosshairPos[axis]*maximum)));
+    $(id).max=maximum;$(id).value=value;
+    $(id+'Value').textContent=`${value+1} / ${current.dims[axis]}`;
+  }
+}
+function slice(id='slice',axis=2) {
+  if(!current)return;
+  nv.scene.crosshairPos[axis]=Number($(id).value)/Math.max(1,current.dims[axis]-1);
+  syncSlices();nv.drawScene();
 }
 function windowing() {
   if(!nv.volumes.length)return;
@@ -157,18 +178,23 @@ function windowing() {
   $('contrastValue').textContent=Number(low.toFixed(2));$('ceilingValue').textContent=Number(high.toFixed(2));
   nv.volumes[0].cal_min=low;nv.volumes[0].cal_max=high;nv.updateGLVolume();
 }
-function clipping() { $('clip').disabled=!$('clipEnabled').checked;nv.setClipPlane([$ ('clipEnabled').checked?Number($('clip').value)/100:2,0,0]); }
-function reset() {
+function clipping() {
+  const angle=cutViews[Number($('clipAxis').value)];
+  nv.setClipPlane([Number($('clip').value)/100,...angle]);
+  $('clipValue').textContent=$('clip').value==='0'?'中央':$('clip').value+'%';
+}
+function faceCut() {nv.setRenderAzimuthElevation(...cutViews[Number($('clipAxis').value)]);}
+async function reset() {
   $('contrast').value=current.window[0];$('ceiling').value=current.window[1];$('opacity').value=100;$('opacityValue').textContent='100%';
-  $('clipEnabled').checked=false;$('clip').value=0;
-  nv.scene.crosshairPos=[.5,.5,.5]; nv.setScale(1);nv.setRenderAzimuthElevation(135,15);
-  nv.setOpacity(0,1);windowing();clipping();slice();mode(4);
+  $('clip').value=0;$('clipAxis').value='2';
+  nv.scene.crosshairPos=[.5,.5,.5];nv.setScale(1);nv.setRenderAzimuthElevation(120,40);
+  nv.setOpacity(0,1);windowing();syncSlices();await mode('slice');
 }
 
 async function start() {
   nv = new Niivue({backColor:[.031,.059,.075,1],textHeight:0,isOrientationTextVisible:false,isOrientCube:false,isRuler:false,
     show3Dcrosshair:false,isColorbar:false,showLegend:false,dragAndDropEnabled:false,dragMode:0,multiplanarShowRender:1,
-    crosshairColor:[.7,.86,.79,1],clipPlaneColor:[.5,.7,.6,.12],multiplanarLayout:2,crosshairWidth:1,forceDevicePixelRatio:1,loadingText:'',logLevel:'error'});
+    crosshairColor:[.7,.86,.79,1],clipPlaneColor:[0,0,0,0],multiplanarLayout:2,crosshairWidth:1,forceDevicePixelRatio:1,loadingText:'',logLevel:'error'});
   await nv.attachToCanvas($('gl'));
   $('gl').addEventListener('webglcontextlost',e=>{e.preventDefault();status('顯示中斷，請重新整理');$('empty').hidden=false;$('empty').textContent='Safari 顯示記憶體已釋放。請重新整理後載入較小的體積。';});
   $('dataset').addEventListener('change',()=>guarded(async()=>{
@@ -193,12 +219,12 @@ async function start() {
     const local=document.createElement('option');local.value='local';local.textContent=data.label;local.disabled=true;
     $('dataset').append(local);$('dataset').value='local';$('file').value='';
   });
-  $('modes').onclick=e=>{const b=e.target.closest('[data-mode]');if(b)mode(Number(b.dataset.mode));};
-  $('slice').oninput=slice;$('contrast').oninput=windowing;$('ceiling').oninput=windowing;
+  $('modes').onclick=e=>{const b=e.target.closest('[data-mode]');if(b)guarded(()=>mode(b.dataset.mode));};
+  $('slice').oninput=()=>slice();$('sliceX').oninput=()=>slice('sliceX',0);$('sliceY').oninput=()=>slice('sliceY',1);$('contrast').oninput=windowing;$('ceiling').oninput=windowing;
   $('opacity').oninput=()=>{$('opacityValue').textContent=$('opacity').value+'%';if(nv.volumes.length)nv.setOpacity(0,Number($('opacity').value)/100);};
-  $('clipEnabled').onchange=clipping;$('clip').oninput=clipping;$('reset').onclick=reset;
-  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{mode(4);nv.setRenderAzimuthElevation(...({front:[0,0],side:[90,0],top:[0,90]})[b.dataset.view]);});
-  nv.onLocationChange=()=>{if(current){const z=Math.round(nv.scene.crosshairPos[2]*(current.dims[2]-1));$('slice').value=z;$('sliceValue').textContent=`${z+1} / ${current.dims[2]}`;}};
+  $('clipAxis').onchange=()=>{clipping();faceCut();};$('clip').oninput=clipping;$('faceCut').onclick=faceCut;$('reset').onclick=()=>guarded(reset);
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{nv.setRenderAzimuthElevation(...({front:[0,0],side:[90,0],top:[0,90]})[b.dataset.view]);});
+  nv.onLocationChange=syncSlices;
   const localHost=['localhost','127.0.0.1'].includes(location.hostname) || /^192\.168\./.test(location.hostname);
   let config;
   const r=await fetch(localHost?'./api/catalog':'./catalog.json',{cache:'no-store'});
