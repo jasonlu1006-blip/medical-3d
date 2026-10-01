@@ -1,0 +1,62 @@
+{
+  "budget_bytes": 83886080,
+  "elapsed": 9.234557583986316,
+  "files": [
+    {
+      "name": "synthstrip.1.pt",
+      "url": "https://huggingface.co/jil202/synthstrip/resolve/4d7225d0eee84d871aa0df3f37921862e4f5f0b8/synthstrip.1.pt",
+      "bytes": 30851709,
+      "sha256": "37417f802196186441aae3e7f385d94f8a98c64a88acaeaa2723af995c653e33",
+      "upstream_hash_matched": true
+    },
+    {
+      "name": "mri_synthstrip.py",
+      "url": "https://raw.githubusercontent.com/freesurfer/freesurfer/cf4bccf24875a47245b4df9fc9372d0f1c3d784f/mri_synthstrip/mri_synthstrip",
+      "bytes": 12238,
+      "sha256": "291c253ab2f7c0cbcb84afa769ae10909549537e727db5b92d268754b7cc7871",
+      "upstream_hash_matched": false
+    },
+    {
+      "name": "scikit_image-0.26.0-cp312-cp312-macosx_11_0_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/e3/be/f8dd17d0510f9911f9f17ba301f7455328bf13dae416560126d428de9568/scikit_image-0.26.0-cp312-cp312-macosx_11_0_arm64.whl",
+      "bytes": 12061567,
+      "sha256": "3409e89d66eff5734cd2b672d1c48d2759360057e714e1d92a11df82c87cba37",
+      "upstream_hash_matched": true
+    },
+    {
+      "name": "lazy_loader-0.4-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/83/60/d497a310bde3f01cb805196ac61b7ad6dc5dcf8dce66634dc34364b20b4f/lazy_loader-0.4-py3-none-any.whl",
+      "bytes": 12097,
+      "sha256": "342aa8e14d543a154047afb4ba8ef17f5563baad3fc610d7b15b213b0f119efc",
+      "upstream_hash_matched": true
+    }
+  ],
+  "verified_at": "2026-10-01",
+  "official_project": "https://surfer.nmr.mgh.harvard.edu/docs/synthstrip/",
+  "upstream_commit": "cf4bccf24875a47245b4df9fc9372d0f1c3d784f",
+  "model": "SynthStrip v1",
+  "model_license": "MIT or CC-BY-4.0 as offered by official SynthStrip site; weights are not redistributed in this repo",
+  "architecture_source_license": "FreeSurfer upstream terms; architecture source stays in local dependency area, not redistributed",
+  "scikit_image_license": "BSD-3-Clause; bundled component licenses retained in extracted wheel",
+  "lazy_loader_license": "BSD-3-Clause",
+  "runtime": {
+    "python": "3.12.14",
+    "torch": "2.8.0",
+    "device": "CPU",
+    "threads": 4
+  },
+  "data_flow": "Local source images to local model only; website receives encrypted derived bundle. No remote inference.",
+  "budget": {
+    "download_bytes": 83886080,
+    "inference_timeout_seconds": 180,
+    "job_bytes": 268435456,
+    "max_file_bytes": 67108864,
+    "heavy_concurrency": 1
+  },
+  "maintenance": "Pinned reviewed upstream commit; no automatic updates",
+  "adapter_limitations": [
+    "JPEG display intensity rather than native MR",
+    "assumed orientation and 1:1:4 display spacing",
+    "no clinical boundary review"
+  ]
+}

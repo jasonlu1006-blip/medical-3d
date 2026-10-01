@@ -17,3 +17,8 @@ evidence/onboarding.json
 *.jpeg
 __pycache__/
 .DS_Store
+*.obj
+*.stl
+*.npz
+*.pt
+*.bin

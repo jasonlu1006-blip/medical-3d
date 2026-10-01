@@ -1,6 +1,6 @@
 {
   "verified_at": "2026-10-01",
-  "status": "Preview 02 published; local rendering verified and HTTPS assets matched",
+  "status": "Preview 03 published; candidate brain segmentation and local rendering verified; HTTPS assets matched",
   "engine": "NiiVue 0.58.0",
   "unit_tests": {
     "passed": 7,
@@ -52,8 +52,8 @@
     },
     {
       "path": "web/app.js",
-      "bytes": 15519,
-      "sha256": "9d1a0263910cdafe7a45c70963114f7db12e0485fe421406aa1571dd3e6dd2c4"
+      "bytes": 19578,
+      "sha256": "527e6e091f200b06d06c1097ba51c461acaed0dd95be57cc4aaf6ccaa3d7e80c"
     },
     {
       "path": "web/catalog.json",
@@ -62,13 +62,13 @@
     },
     {
       "path": "web/index.html",
-      "bytes": 5666,
-      "sha256": "81346778f49f5c1d033d44448fed716eb69d7ab8c975df7b43cf956afb136217"
+      "bytes": 5891,
+      "sha256": "794e62eda78a3372abaf73e462b4170e67b22efcfbec33f4992fa3d7e3b088ec"
     },
     {
       "path": "web/style.css",
-      "bytes": 8142,
-      "sha256": "2422b157205e0fa7614c4caee508e51b9902fcd33ce0f8ad8821cbd06b01057b"
+      "bytes": 8315,
+      "sha256": "9f53777c2e63b75a16cb7bd14c8485a18e75f53f5aff159ce883ce63ff277ec8"
     },
     {
       "path": "web/unlock.js",
@@ -91,6 +91,11 @@
       "sha256": "3e34081504d6041c4dac7098c72cc1a6100bfc7d10e712fc33a543e257b7ff90"
     },
     {
+      "path": "code/extract_brain.py",
+      "bytes": 7834,
+      "sha256": "b636175f234d5d05e329b95e65003d2e71970f2d491fcb0d087ab7afff70af0b"
+    },
+    {
       "path": "code/prepare_display_stack.py",
       "bytes": 3741,
       "sha256": "88a9b2153852b8afa95a36dd7f9154332695d2608e6da18af948e1a8f55961c8"
@@ -109,7 +114,7 @@
   "deployment": {
     "url": "https://jasonlu1006-blip.github.io/medical-3d/",
     "branch": "gh-pages",
-    "commit": "ebb0e6eea5da99cb3a5879cdeaa527b719214333",
+    "commit": "59c41045ffd60706948692999c79ca49c5e5dff6",
     "pages_status": "built",
     "encryption": "AES-256-GCM; PBKDF2-SHA256 600000; random 16-byte salt and 12-byte IV",
     "credentials_persisted": false,
@@ -117,20 +122,20 @@
     "assets": [
       {
         "path": "index.html",
-        "bytes": 5666,
-        "sha256": "81346778f49f5c1d033d44448fed716eb69d7ab8c975df7b43cf956afb136217",
+        "bytes": 5891,
+        "sha256": "794e62eda78a3372abaf73e462b4170e67b22efcfbec33f4992fa3d7e3b088ec",
         "matches": true
       },
       {
         "path": "app.js",
-        "bytes": 15519,
-        "sha256": "9d1a0263910cdafe7a45c70963114f7db12e0485fe421406aa1571dd3e6dd2c4",
+        "bytes": 19578,
+        "sha256": "527e6e091f200b06d06c1097ba51c461acaed0dd95be57cc4aaf6ccaa3d7e80c",
         "matches": true
       },
       {
         "path": "style.css",
-        "bytes": 8142,
-        "sha256": "2422b157205e0fa7614c4caee508e51b9902fcd33ce0f8ad8821cbd06b01057b",
+        "bytes": 8315,
+        "sha256": "9f53777c2e63b75a16cb7bd14c8485a18e75f53f5aff159ce883ce63ff277ec8",
         "matches": true
       },
       {
@@ -147,8 +152,8 @@
       },
       {
         "path": "vault.bin",
-        "bytes": 6462707,
-        "sha256": "ff79e1dd873db41145dfee07731fd422d73895f6da9d0c1c2e6c78faf55f5755",
+        "bytes": 9590706,
+        "sha256": "07d6ea13b7765b0f5801945965c7b35487214583b564deec0bab317d639fc7ec",
         "matches": true
       },
       {
@@ -176,28 +181,50 @@
     ],
     "hardware_tested": false,
     "browser_checks_verified_at": "2026-09-30 (initial encrypted login flow)",
-    "asset_hashes_verified_at": "2026-10-01"
+    "asset_hashes_verified_at": "2026-10-01 Preview 03"
   },
-  "display_fix": {
-    "default": "source slice; no opaque outer-head start",
-    "modes": [
-      "internal intersecting planes",
-      "central volume cutaway",
-      "source slice",
-      "four-view with internal planes"
+  "brain_segmentation": {
+    "method": "SynthStrip v1 experimental display-JPEG adapter",
+    "case_packages": 2,
+    "clinical_review": false,
+    "geometry_verified": false,
+    "source_frames_unchanged": true,
+    "inference_jobs": [
+      "2026-10-01T080450-46d8f84d8528",
+      "2026-10-01T080833-13712fba5e82"
     ],
+    "mesh_jobs": [
+      "2026-10-01T081207-a2016f10e232",
+      "2026-10-01T081256-ab1ac5636bdf"
+    ],
+    "all_jobs_exit_0_and_group_ended": true,
+    "faces": [
+      47284,
+      44592
+    ],
+    "mesh_closed_and_outward_normals": true,
+    "rle_voxel_count_verified": true,
+    "all_slice_mask_contact_sheets_inspected": true,
+    "known_limitations": [
+      "possible superior-slice undersegmentation",
+      "not a pial cortical reconstruction",
+      "assumed geometry and display JPEG input"
+    ],
+    "default": "isolated brain tissue cutaway",
     "local_browser_checks": [
-      "both selected MRI dates render",
-      "three slice-position sliders update",
-      "cutaway switches axis and depth",
-      "source-slice mode exposes brain image",
-      "reset restores source slice",
-      "phone 390x844",
+      "both dates render and replace prior datasets",
+      "independent surface mesh",
+      "masked MRI tissue",
+      "clip direction and depth",
+      "green overlay alignment and slice navigation",
+      "original source slice and four-view mode without residual mask",
+      "opacity and reset",
+      "switch to phantom clears segmentation controls",
+      "phone 390x844 no horizontal overflow",
       "tablet 820x1180",
-      "no console errors"
+      "no error or warning logs"
     ],
-    "source_and_encrypted_bundle_unchanged": true,
-    "segmentation_implemented": false,
+    "encrypted_packaging_roundtrip": true,
     "live_login_retested": false
   }
 }
