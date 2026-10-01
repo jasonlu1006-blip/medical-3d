@@ -4,7 +4,7 @@ import { Niivue } from './vendor/niivue-0.58.0.js';
 const $ = id => document.getElementById(id);
 const MAX_BYTES = 64 * 1024 * 1024;
 const MAX_VOXELS = 256 ** 3;
-let nv, current, loading = false;
+let nv, current, loading = false, activeMode = 'slice', rotationFrame = 0, rotationTime = 0;
 const catalog = new Map();
 
 function status(text) { $('state').textContent = text; }
@@ -71,9 +71,10 @@ async function decodePackage(p) {
     throw Error('影像包需包含 8–256 張圖片');
   if (p.dimensions?.[0] !== 256 || p.dimensions?.[1] !== 256 || p.dimensions?.[2] !== p.framesBase64.length)
     throw Error('影像尺寸與張數不符');
-  const canvas = document.createElement('canvas'); canvas.width = canvas.height = 256;
+  const size=p.framesBase64.length<=64?512:256;
+  const canvas = document.createElement('canvas'); canvas.width = canvas.height = size;
   const ctx = canvas.getContext('2d', {willReadFrequently: true});
-  const voxels = new Uint8Array(256 * 256 * p.framesBase64.length);
+  const voxels = new Uint8Array(size * size * p.framesBase64.length);
   let sourceShape = '';
   for (let i = 0; i < p.framesBase64.length; i++) {
     status(`讀取切片 ${i + 1} / ${p.framesBase64.length}`);
@@ -84,19 +85,22 @@ async function decodePackage(p) {
       const shape = `${bitmap.width}x${bitmap.height}`;
       if (bitmap.width > 2048 || bitmap.height > 2048 || (sourceShape && sourceShape !== shape)) throw Error('來源圖片尺寸不一致或過大');
       sourceShape = shape;
-      ctx.drawImage(bitmap, 0, 0, 256, 256);
-      const rgba = ctx.getImageData(0, 0, 256, 256).data;
+      ctx.drawImage(bitmap, 0, 0, size, size);
+      const rgba = ctx.getImageData(0, 0, size, size).data;
       // Raster row 0 is the screen top; NIfTI's displayed Y increases upward.
       // This preserves the original 2D display, without assigning patient directions.
-      for (let v = 0; v < 256 * 256; v++) {
-        const target=i*256*256+(255-Math.floor(v/256))*256+v%256;
+      for (let v = 0; v < size * size; v++) {
+        const target=i*size*size+(size-1-Math.floor(v/size))*size+v%size;
         voxels[target] = Math.round(.299 * rgba[v*4] + .587 * rgba[v*4+1] + .114 * rgba[v*4+2]);
       }
     } finally { bitmap.close(); }
   }
-  return {buffer:nifti(voxels, p.dimensions, [1,1,4]), dims:p.dimensions, brain:decodeBrain(p.brainExtraction,voxels.length),
+  const dims=[size,size,p.framesBase64.length],spacing=[256/size,256/size,4];
+  const brain=decodeBrain(p.brainExtraction,256*256*dims[2]);
+  if(brain&&size===512){const mask=new Uint8Array(voxels.length);for(let z=0;z<dims[2];z++)for(let y=0;y<size;y++)for(let x=0;x<size;x++)mask[z*size*size+y*size+x]=brain.mask[z*65536+(y>>1)*256+(x>>1)];brain.mask=mask;}
+  return {buffer:nifti(voxels, dims, spacing), dims,spacing,brain,
     label:String(p.label || '本機顯示影像').slice(0,100), kind:'JPEG 堆疊',
-    notice:'PACS 顯示圖片堆疊。Z 軸 4× 僅為展示比例；方向、切片間距與毫米尺度未校準，不可用於距離或手術路徑判斷。',
+    notice:'PACS 顯示圖片堆疊。體積比例為展示設定；方向、切片間距與毫米尺度未校準，不可用於距離或手術路徑判斷。',
     note:'未校準影像堆疊 · 非解剖比例'};
 }
 
@@ -130,7 +134,7 @@ async function show(data) {
   if(data.brain){
     const masked=current.rawImg.slice();for(let i=0;i<masked.length;i++)if(!data.brain.mask[i])masked[i]=0;
     current.brainImg=masked;
-    const maskBuffer=nifti(data.brain.mask,data.dims,[1,1,4]);
+    const maskBuffer=nifti(data.brain.mask,data.dims,data.spacing);
     const maskHeader=new DataView(maskBuffer);maskHeader.setFloat32(124,1,true);maskHeader.setFloat32(128,0,true);
     await nv.loadFromArrayBuffer(maskBuffer,'brain-mask.nii');
     nv.volumes[1].cal_min=.5;nv.volumes[1].cal_max=1;nv.setColormap(nv.volumes[1].id,'green');nv.setOpacity(1,0);
@@ -150,15 +154,15 @@ async function show(data) {
   $('canvasNote').textContent = data.note;
   $('slice').max=data.dims[2]-1; $('slice').value=Math.floor(data.dims[2]/2);
   await reset();
-  document.title = 'Medical 3D · 影像工作台';
+  document.title = 'Medical 3D · Brain Explorer';
   document.body.dataset.ready = 'true';
   status('已載入 · 本機顯示');
 }
 
 async function guarded(work) {
   if (loading) return;
-  loading=true; $('dataset').disabled=true; $('openFile').disabled=true;
-  const controls=[...document.querySelectorAll('aside input, aside button, #cutControls input, #cutControls select, #cutControls button, #modes button, .slice-navigation input, .quick-views button')];
+  stopRotation();loading=true; $('dataset').disabled=true; $('openFile').disabled=true;
+  const controls=[...document.querySelectorAll('#previewSlice, #rotate, #reset, aside input, aside button, aside select, #cutControls input, #cutControls select, #cutControls button, #modes button, .slice-navigation input, .quick-views button')];
   controls.forEach(c=>c.disabled=true);
   try { await work(); } catch(e) { failure(e); }
   finally {loading=false;$('dataset').disabled=false;$('openFile').disabled=false;controls.forEach(c=>c.disabled=false);}
@@ -166,6 +170,7 @@ async function guarded(work) {
 
 const cutViews = [[0,0],[90,0],[0,90]];
 async function mode(value) {
+  stopRotation();activeMode=value;document.body.dataset.mode=value;
   if(['brain','tissue','review'].includes(value)&&!current?.brain)throw Error('這份影像尚無腦分割');
   const internal=value==='planes'||value==='multi';
   const isolated=value==='brain'||value==='tissue'||(value==='cut'&&current?.brain);
@@ -174,16 +179,21 @@ async function mode(value) {
   if(nv.volumes.length>1)nv.setOpacity(1,value==='review'?.42:0);
   nv.setOpacity(0,value==='brain'?0:Number($('opacity').value)/100);
 
-  await nv.setVolumeRenderIllumination(internal?-1:0);
+  const sculpted=isolated&&value!=='brain'&&$('renderStyle').value!=='flat';
+  nv.setColormap(nv.volumes[0].id,sculpted&&$('renderStyle').value==='warm'?'brainWarm':'gray');
+  nv.setGamma(sculpted?1.45:1);
+  await nv.setVolumeRenderIllumination(internal?-1:sculpted?.7:0);
   // Illumination refreshes the base layer; rebuild overlays afterwards.
   nv.updateGLVolume();
   nv.setSliceType(['slice','review'].includes(value)?0:value==='multi'?3:4);
   document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===value));
-  $('viewLabel').textContent=({brain:'BRAIN SURFACE · AI CANDIDATE',tissue:'BRAIN TISSUE · AI CANDIDATE',review:'MASK OVER SOURCE',planes:'3D INTERNAL PLANES',cut:'VOLUME CUTAWAY',slice:'SOURCE SLICE',multi:'INTERNAL PLANES + SLICES'})[value];
+  $('sceneTitle').textContent=({brain:'腦的輪廓。',tissue:'腦內，另一個視角。',review:'讓分割，回到原片。',planes:'走進影像的空間。',cut:'從表面，走進內部。',slice:'回到影像本身。',multi:'讓每個視角連在一起。'})[value];
+  $('viewLabel').textContent=({brain:'BRAIN ENVELOPE',tissue:'BRAIN / VOLUME EXPLORER',review:'MASK OVER SOURCE',planes:'3D INTERNAL PLANES',cut:'VOLUME CUTAWAY',slice:'SOURCE SLICE',multi:'INTERNAL PLANES + SLICES'})[value];
   $('modeHelp').textContent=({brain:'腦部候選分割的獨立表面。拖曳旋轉；可用「核對分割」檢查邊界。',tissue:'僅顯示候選腦區域內的 MRI 訊號，頭皮等外層已依遮罩移除。',review:'綠色為模型選取的腦區域。逐張換片，檢查有無漏選或誤選。',planes:'三個內部切面可旋轉；下方滑桿移動切面，查看腦內影像。',cut:current?.brain?'只顯示分割後的腦組織，並剖開露出內部 MRI。拖曳旋轉；下方可調剖切方向與深度。':'已移除半側體積。可調剖切方向與深度。',slice:'直接查看原切片方向的影像，滑動下方「原切片位置」逐張查看。',multi:'點選切片移動交點，同時對照三個重切面與立體切面。'})[value];
   $('gestureHelp').textContent=['slice','review'].includes(value)?'點選移動交點 · 下方滑桿換片':'單指拖曳旋轉 · 雙指縮放';
   $('cutControls').hidden=value!=='cut';
   document.querySelector('.quick-views').hidden=['slice','review'].includes(value);
+  $('sourceCard').hidden=!current.brain||['slice','review','multi'].includes(value);
   document.querySelector('.slice-navigation').hidden=['cut','brain','tissue'].includes(value);
   if(internal||isolated)nv.setRenderAzimuthElevation(135,160);
   $('canvasNote').textContent=(isolated||value==='review')?'AI 候選分割 · 幾何未校準':current.note;
@@ -191,8 +201,8 @@ async function mode(value) {
   document.querySelectorAll('.reslice-control').forEach(el=>el.hidden=['slice','review','cut'].includes(value));
   // A camera-facing central clip is enabled whenever cutaway is selected.
   if(value==='cut'){clipping();nv.setRenderAzimuthElevation(135,145);}else{nv.setClipPlane([2,0,0]);}
-  nv.setScale(current?.brain?(value==='cut'?1.5:['brain','tissue'].includes(value)?1.3:1):1);
-  nv.drawScene();
+  nv.setScale(current?.brain?(['cut','brain','tissue'].includes(value)?(innerWidth<621?1.45:1.12):1):1);
+  nv.drawScene();drawSource();
 }
 function syncSlices() {
   if(!current)return;
@@ -202,6 +212,7 @@ function syncSlices() {
     $(id).max=maximum;$(id).value=value;
     $(id+'Value').textContent=`${value+1} / ${current.dims[axis]}`;
   }
+  drawSource();
 }
 function slice(id='slice',axis=2) {
   if(!current)return;
@@ -229,11 +240,43 @@ async function reset() {
   nv.setOpacity(0,1);windowing();syncSlices();if(current.brainMesh)nv.setMeshProperty(current.brainMesh.id,'opacity',1);await mode(current.brain?'cut':'slice');
 }
 
+// Procedural neutral studio lighting, not anatomical image generation.
+function softLightMatcap(){
+  const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d'),img=ctx.createImageData(128,128);
+  for(let y=0;y<128;y++)for(let x=0;x<128;x++){const nx=(x-63.5)/63.5,ny=(63.5-y)/63.5,nz=Math.sqrt(Math.max(0,1-nx*nx-ny*ny));const diffuse=Math.max(0,-.36*nx+.48*ny+.8*nz),fill=Math.max(0,.6*nx-.1*ny+.3*nz);const v=Math.min(255,255*(.23+.48*diffuse+.12*fill));const i=(y*128+x)*4;img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=255;}
+  ctx.putImageData(img,0,0);return c.toDataURL();
+}
+function setSettings(open){$('settingsPanel').hidden=!open;$('settingsToggle').setAttribute('aria-expanded',String(open));if(!open)$('settingsToggle').focus();}
+function stopRotation(){if(rotationFrame)cancelAnimationFrame(rotationFrame);rotationFrame=0;rotationTime=0;$('rotate').setAttribute('aria-pressed','false');}
+function startRotation(){
+  if(!current||!['tissue','brain','cut','multi'].includes(activeMode))return;
+  $('rotate').setAttribute('aria-pressed','true');
+  const frame=t=>{if(rotationTime&&t-rotationTime<33){rotationFrame=requestAnimationFrame(frame);return;}const dt=rotationTime?Math.min((t-rotationTime)/1000,.1):0;rotationTime=t;nv.setRenderAzimuthElevation(nv.scene.renderAzimuth+dt*10,nv.scene.renderElevation);rotationFrame=requestAnimationFrame(frame);};
+  rotationFrame=requestAnimationFrame(frame);
+}
+function drawSource(){
+  if(!current?.brain||!current.rawImg)return;
+  const z=Math.max(0,Math.min(current.dims[2]-1,Math.round(nv.scene.crosshairPos[2]*(current.dims[2]-1))));
+  $('previewSlice').max=current.dims[2]-1;$('previewSlice').value=z;$('previewValue').textContent=`${z+1} / ${current.dims[2]}`;
+  if(current.previewZ===z)return;current.previewZ=z;
+  const ctx=$('sourcePreview').getContext('2d'),pixels=ctx.createImageData(256,256);
+  for(let y=0;y<256;y++)for(let x=0;x<256;x++){const n=current.dims[0],sy=Math.floor(y*n/256),sx=Math.floor(x*n/256),v=current.rawImg[z*n*n+(n-1-sy)*n+sx],i=(y*256+x)*4;pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=v;pixels.data[i+3]=255;}
+  ctx.putImageData(pixels,0,0);
+}
+
 async function start() {
-  nv = new Niivue({backColor:[.031,.059,.075,1],textHeight:0,isOrientationTextVisible:false,isOrientCube:false,isRuler:false,
+  nv = new Niivue({backColor:[.03137,.05098,.07843,1],textHeight:0,isOrientationTextVisible:false,isOrientCube:false,isRuler:false,
     show3Dcrosshair:false,isColorbar:false,showLegend:false,dragAndDropEnabled:false,dragMode:0,multiplanarShowRender:1,
-    crosshairColor:[.7,.86,.79,1],clipPlaneColor:[0,0,0,0],multiplanarLayout:2,crosshairWidth:1,forceDevicePixelRatio:1,loadingText:'',logLevel:'error'});
+    crosshairColor:[.7,.86,.79,1],clipPlaneColor:[0,0,0,0],multiplanarLayout:2,crosshairWidth:1,forceDevicePixelRatio:Math.min(devicePixelRatio,1.5),loadingText:'',logLevel:'error'});
   await nv.attachToCanvas($('gl'));
+  await nv.loadMatCapTexture(softLightMatcap());
+  nv.addColormap('brainWarm',{I:[0,38,90,160,220,255],R:[0,70,154,219,246,255],G:[0,62,126,191,231,253],B:[0,65,120,175,214,243],A:[0,16,70,150,215,255]});
+  $('settingsToggle').onclick=()=>setSettings($('settingsPanel').hidden);$('settingsClose').onclick=()=>setSettings(false);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')setSettings(false);});
+  $('renderStyle').onchange=()=>guarded(()=>mode(activeMode));
+  $('rotate').onclick=()=>rotationFrame?stopRotation():startRotation();
+  $('gl').addEventListener('pointerdown',stopRotation);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopRotation();});
+  $('previewSlice').oninput=()=>{$('slice').value=$('previewSlice').value;slice();};
   $('gl').addEventListener('webglcontextlost',e=>{e.preventDefault();status('顯示中斷，請重新整理');$('empty').hidden=false;$('empty').textContent='Safari 顯示記憶體已釋放。請重新整理後載入較小的體積。';});
   $('dataset').addEventListener('change',()=>guarded(async()=>{
     if($('dataset').value==='phantom')return show(phantom());
@@ -261,7 +304,7 @@ async function start() {
   $('slice').oninput=()=>slice();$('sliceX').oninput=()=>slice('sliceX',0);$('sliceY').oninput=()=>slice('sliceY',1);$('contrast').oninput=windowing;$('ceiling').oninput=windowing;
   $('opacity').oninput=()=>{$('opacityValue').textContent=$('opacity').value+'%';if(nv.volumes.length){const alpha=Number($('opacity').value)/100;const surface=document.querySelector('[data-mode=brain]')?.classList.contains('active');nv.setOpacity(0,surface?0:alpha);if(current?.brainMesh)nv.setMeshProperty(current.brainMesh.id,'opacity',alpha);}};
   $('clipAxis').onchange=()=>{clipping();faceCut();};$('clip').oninput=clipping;$('faceCut').onclick=faceCut;$('reset').onclick=()=>guarded(reset);
-  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{nv.setRenderAzimuthElevation(...({front:[0,0],side:[90,0],top:[0,90]})[b.dataset.view]);});
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{stopRotation();nv.setRenderAzimuthElevation(...({front:[0,0],side:[90,0],top:[0,90]})[b.dataset.view]);});
   nv.onLocationChange=syncSlices;
   const localHost=['localhost','127.0.0.1'].includes(location.hostname) || /^192\.168\./.test(location.hostname);
   let config;

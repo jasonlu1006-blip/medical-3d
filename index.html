@@ -1,43 +1,21 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
-  <meta name="theme-color" content="#101a20"><title>Medical 3D · 影像工作台</title>
-  <link rel="stylesheet" href="style.css?v=20261001-brain">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="theme-color" content="#080d14"><title>Medical 3D · Brain Explorer</title><link rel="stylesheet" href="style.css?v=20261001-explorer">
 </head>
 <body class="locked">
-  <div id="login" class="login-screen"><form id="loginForm" class="login-card">
-    <div class="eyebrow">MEDICAL 3D</div><h2>開啟影像工作台</h2><p>輸入帳號密碼，解鎖 MRI 示範影像。</p>
-    <label for="username">帳號</label><input id="username" autocomplete="username" autocapitalize="characters" required>
-    <label for="password">密碼</label><input id="password" type="password" autocomplete="current-password" required>
-    <button id="unlock" class="button" type="submit">解鎖影像</button><p id="loginStatus" role="status" aria-live="polite">影像在此裝置解密，重新整理後需再次解鎖。</p>
-  </form></div>
-  <header><a class="brand" href="./"><span class="brand-icon">◈</span> MEDICAL <b>3D</b></a><span class="edition">影像工作台 <small>PREVIEW 03</small></span><button id="openFile" class="button">＋ 開啟影像檔</button><button id="lock" class="text-button" hidden>鎖定</button><input id="file" type="file" accept=".m3d,.nii" hidden></header>
-  <main>
-    <aside>
-      <div class="eyebrow">WORKSPACE</div><h1>從切片，<br>看見立體。</h1><p class="intro">探索影像、調整剖面，<br>從不同視角理解空間。</p>
-      <section><label for="dataset">影像資料</label><select id="dataset"><option value="phantom">合成幾何 · 功能測試</option></select><div class="meta"><span id="dimensions">—</span><span id="kind">合成測試</span></div></section>
-
-      <section class="controls"><div class="section-title">影像調整 <button class="text-button" id="reset">重設</button></div>
-        <label for="contrast">亮度下限 <output id="contrastValue">25</output></label><input id="contrast" type="range" min="0" max="240" value="25">
-        <label for="ceiling">亮度上限 <output id="ceilingValue">220</output></label><input id="ceiling" type="range" min="1" max="255" value="220">
-        <label for="opacity">不透明度 <output id="opacityValue">100%</output></label><input id="opacity" type="range" min="5" max="100" value="100">
-      </section>
-
-      <details><summary>這份影像的限制</summary><p id="details">合成幾何，只用於驗證顯示與操作。</p><p>本版提供腦部 AI 候選分割及表面模型，尚未提供腫瘤／血管分割、手術路徑或力學模擬。重採樣切面不增加原始影像資訊。</p></details>
-      <footer>裝置內顯示 · 本機選檔不會上傳<br><a href="vendor/NIIVUE-LICENSE.txt">NiiVue 0.58.0</a></footer>
-    </aside>
-    <div class="workspace">
-      <div class="viewer-top"><div><span class="dot"></span><span id="title">合成幾何 · 功能測試</span></div><span id="state" role="status" aria-live="polite">準備顯示引擎</span></div>
-      <div class="segmented" id="modes" aria-label="顯示方式"><button data-mode="brain" data-needs-brain hidden>腦外形</button><button data-mode="tissue" data-needs-brain hidden>腦組織</button><button data-mode="cut">剖開看</button><button data-mode="slice">原切片</button><button data-mode="multi">四視窗</button><button data-mode="review" data-needs-brain hidden>核對分割</button></div>
-      <p id="modeHelp" class="mode-help">三個內部切面可旋轉；下方滑桿移動切面，查看腦內影像。</p>
-      <div class="canvas-wrap"><canvas id="gl" aria-label="可互動的三維影像"></canvas><div id="empty" hidden></div><div class="view-label" id="viewLabel">3D VOLUME</div><div class="canvas-note" id="canvasNote">合成幾何 · 非病例影像</div><div class="quick-views"><button data-view="front">正面視角</button><button data-view="side">側面視角</button><button data-view="top">頂部視角</button></div></div>
-      <div class="viewer-bottom"><span id="gestureHelp">單指拖曳旋轉 · 雙指縮放</span><span id="resolution">—</span></div>
-      <section id="cutControls" hidden><label for="clipAxis">剖開方向</label><select id="clipAxis"><option value="0">方向一</option><option value="1">方向二</option><option value="2">方向三</option></select><label for="clip">剖切深度 <output id="clipValue">中央</output></label><input aria-label="剖切深度" id="clip" type="range" min="-45" max="45" value="0"><button id="faceCut" class="text-button">面向剖面</button><p class="hint">移除一側體積以露出內部；有分割資料時，只剖開候選腦區域。</p></section>
-      <section class="slice-navigation" aria-label="切面位置"><div><label for="slice">原切片位置 <output id="sliceValue">—</output></label><input id="slice" type="range" min="0" max="100" value="50"></div><div class="reslice-control"><label for="sliceX">重切面一 <output id="sliceXValue">—</output></label><input id="sliceX" type="range" min="0" max="255" value="128"></div><div class="reslice-control"><label for="sliceY">重切面二 <output id="sliceYValue">—</output></label><input id="sliceY" type="range" min="0" max="255" value="128"></div></section>
-      <div class="notice"><span>◉</span><p id="notice">合成幾何供功能測試。可從左側選擇本機病例，或開啟 .m3d／未壓縮 .nii 檔。</p></div>
-    </div>
-  </main>
-  <script type="module" src="app.js?v=20261001-brain"></script>
+<div id="login" class="login-screen"><div class="login-intro"><span class="eyebrow">MEDICAL 3D / EXPLORER</span><h1>換個角度，<br>看見腦內。</h1><p>從影像走進空間。<br>旋轉、剖開，再回到每一張原片。</p><span class="login-caption">VOLUME EXPLORER — 04</span></div><form id="loginForm" class="login-card"><span class="eyebrow">PRIVATE WORKSPACE</span><h2>開啟影像空間</h2><label for="username">帳號</label><input id="username" autocomplete="username" autocapitalize="characters" required><label for="password">密碼</label><input id="password" type="password" autocomplete="current-password" required><button id="unlock" type="submit" class="primary">解鎖影像 <span>↗</span></button><p id="loginStatus" role="status" aria-live="polite">影像在裝置內解密，重新整理後需再次解鎖。</p></form></div>
+<header><a class="brand" href="./"><span class="brand-mark">M<span>3</span></span><span>MEDICAL <b>3D</b><small>BRAIN EXPLORER</small></span></a><div class="study-select"><label class="sr-only" for="dataset">影像資料</label><span class="study-dot"></span><select id="dataset"><option value="phantom">合成幾何 · 功能測試</option></select></div><div class="header-actions"><button id="openFile" class="quiet">匯入</button><button id="settingsToggle" aria-controls="settingsPanel" aria-expanded="false" class="quiet">調整 <span>☷</span></button><button id="lock" class="quiet" hidden>鎖定</button></div><input id="file" type="file" accept=".m3d,.nii" hidden></header>
+<main>
+<div class="canvas-wrap"><canvas id="gl" aria-label="可互動的三維影像"></canvas><div id="empty" hidden></div></div>
+<div class="scene-heading"><span class="eyebrow" id="viewLabel">VOLUME EXPLORER</span><h1 id="sceneTitle">腦內，另一個視角。</h1><p id="modeHelp">拖曳旋轉，探索影像中的空間。</p><div class="scene-meta"><span id="kind">—</span><span id="resolution">—</span><span id="state" role="status" aria-live="polite">準備顯示</span></div><span id="title" class="sr-only"></span><span id="dimensions" class="sr-only"></span></div>
+<div class="quick-views"><span>VIEW</span><button data-view="front" aria-label="正面視角">01</button><button data-view="side" aria-label="側面視角">02</button><button data-view="top" aria-label="頂部視角">03</button><i></i><button id="rotate" aria-pressed="false" aria-label="自動旋轉">↻</button><button id="reset" aria-label="重設視角">⌂</button></div>
+<section class="source-card" id="sourceCard" aria-label="同步原始切片"><div class="card-label"><span>SOURCE IMAGE</span><output id="previewValue">—</output></div><canvas id="sourcePreview" width="256" height="256" aria-label="原始切片對照"></canvas><div class="preview-control"><label for="previewSlice">原片位置</label><input id="previewSlice" aria-label="原片位置" type="range" min="0" max="62" value="31"></div><p>同一組 MRI · 原片對照</p></section>
+<div class="scene-foot"><span id="gestureHelp">拖曳旋轉 · 雙指縮放</span><span id="canvasNote">AI 候選分割 · 幾何未校準</span></div>
+<div class="bottom-tools"><section id="cutControls" hidden><div class="cut-heading"><label for="clipAxis">剖切方向</label><select id="clipAxis"><option value="0">方向一</option><option value="1">方向二</option><option value="2">方向三</option></select><button id="faceCut" class="quiet">面向剖面</button><output id="clipValue">中央</output></div><div class="cut-range"><span>淺</span><input aria-label="剖切深度" id="clip" type="range" min="-45" max="45" value="0"><span>深</span></div></section><section class="slice-navigation" aria-label="切面位置"><div><label for="slice">原切片位置 <output id="sliceValue">—</output></label><input id="slice" type="range" min="0" max="100" value="50"></div><div class="reslice-control"><label for="sliceX">重切面一 <output id="sliceXValue">—</output></label><input id="sliceX" type="range" min="0" max="255" value="128"></div><div class="reslice-control"><label for="sliceY">重切面二 <output id="sliceYValue">—</output></label><input id="sliceY" type="range" min="0" max="255" value="128"></div></section>
+<nav id="modes" aria-label="顯示方式"><button data-mode="tissue" data-needs-brain hidden><span class="mode-symbol">◈</span>立體探索</button><button data-mode="cut"><span class="mode-symbol">◐</span>剖開看</button><button data-mode="review" data-needs-brain hidden><span class="mode-symbol">⊕</span>分割核對</button><button data-mode="slice"><span class="mode-symbol">▤</span>原切片</button><button data-mode="multi"><span class="mode-symbol">⊞</span>四視窗</button><button data-mode="brain" data-needs-brain hidden><span class="mode-symbol">◇</span>腦外形</button></nav></div>
+<aside id="settingsPanel" hidden><div class="panel-heading"><h2>影像調整</h2><button id="settingsClose" class="quiet" aria-label="關閉調整">×</button></div><section><label for="renderStyle">立體外觀</label><select id="renderStyle"><option value="warm">暖色光影</option><option value="gray">灰階光影</option><option value="flat">原始灰階</option></select><p class="hint">外觀配色不代表組織分類；原切片維持灰階。</p><label for="contrast">亮度下限 <output id="contrastValue">25</output></label><input id="contrast" type="range" min="0" max="240" value="25"><label for="ceiling">亮度上限 <output id="ceilingValue">220</output></label><input id="ceiling" type="range" min="1" max="255" value="220"><label for="opacity">不透明度 <output id="opacityValue">100%</output></label><input id="opacity" type="range" min="5" max="100" value="100"></section><details><summary>來源與限制</summary><p id="details"></p><p id="notice"></p><p>尚未提供腫瘤／血管分割、手術路徑或力學模擬。現有 JPEG 不提供已驗證的解剖方向或毫米尺度。</p></details><footer>本機選檔不會上傳<br><a href="vendor/NIIVUE-LICENSE.txt">NiiVue 0.58.0</a> · EXPLORER 04</footer></aside>
+</main><script type="module" src="app.js?v=20261001-explorer"></script>
 </body></html>
