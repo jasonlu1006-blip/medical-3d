@@ -52,8 +52,8 @@
     },
     {
       "path": "web/app.js",
-      "bytes": 23739,
-      "sha256": "353a06982fd80eae7869b9ed0874600a947be80749bfc2e88b97a368cccb839a"
+      "bytes": 23743,
+      "sha256": "ae31e25ecc3223124b05438eea098b44848e87cee30ec6c82c04adb745feb18f"
     },
     {
       "path": "web/catalog.json",
@@ -63,12 +63,12 @@
     {
       "path": "web/index.html",
       "bytes": 6837,
-      "sha256": "f9584c8eb1967e428fa3d9b3a869c38dc3744f66e165d677b6df6594e0ff28e2"
+      "sha256": "b2e19fe30f607fff451f18478e443d8bae3f7c84df9dc9da654217c641b55ccf"
     },
     {
       "path": "web/style.css",
-      "bytes": 12014,
-      "sha256": "304e0a703d2b2905568bb9eaf202a6e23bf60af959f11760512db3f109412344"
+      "bytes": 12069,
+      "sha256": "84ccc897db98b09b66dec89744efe3aeaf7c1a22810a0156cff8fea8b02b5793"
     },
     {
       "path": "web/unlock.js",
@@ -114,7 +114,7 @@
   "deployment": {
     "url": "https://jasonlu1006-blip.github.io/medical-3d/",
     "branch": "gh-pages",
-    "commit": "d12395043943525f20c2e22248a21e5971d8d4f7",
+    "commit": "65a95d534a822412fe7de66459e7c33a7cc9550f",
     "pages_status": "built",
     "encryption": "AES-256-GCM; PBKDF2-SHA256 600000; random 16-byte salt and 12-byte IV",
     "credentials_persisted": false,
@@ -123,19 +123,19 @@
       {
         "path": "index.html",
         "bytes": 6837,
-        "sha256": "f9584c8eb1967e428fa3d9b3a869c38dc3744f66e165d677b6df6594e0ff28e2",
+        "sha256": "b2e19fe30f607fff451f18478e443d8bae3f7c84df9dc9da654217c641b55ccf",
         "matches": true
       },
       {
         "path": "app.js",
-        "bytes": 23739,
-        "sha256": "353a06982fd80eae7869b9ed0874600a947be80749bfc2e88b97a368cccb839a",
+        "bytes": 23743,
+        "sha256": "ae31e25ecc3223124b05438eea098b44848e87cee30ec6c82c04adb745feb18f",
         "matches": true
       },
       {
         "path": "style.css",
-        "bytes": 12014,
-        "sha256": "304e0a703d2b2905568bb9eaf202a6e23bf60af959f11760512db3f109412344",
+        "bytes": 12069,
+        "sha256": "84ccc897db98b09b66dec89744efe3aeaf7c1a22810a0156cff8fea8b02b5793",
         "matches": true
       },
       {

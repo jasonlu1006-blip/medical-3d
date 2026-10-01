@@ -170,7 +170,7 @@ async function guarded(work) {
 
 const cutViews = [[0,0],[90,0],[0,90]];
 async function mode(value) {
-  stopRotation();activeMode=value;document.body.dataset.mode=value;
+  stopRotation();activeMode=value;document.body.dataset.viewMode=value;
   if(['brain','tissue','review'].includes(value)&&!current?.brain)throw Error('這份影像尚無腦分割');
   const internal=value==='planes'||value==='multi';
   const isolated=value==='brain'||value==='tissue'||(value==='cut'&&current?.brain);
