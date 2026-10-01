@@ -8,7 +8,7 @@ from urllib.parse import urlsplit
 
 WEB = Path(__file__).resolve().parents[1] / 'web'
 STATIC = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js',
-          '/unlock.js': 'unlock.js', '/catalog.json': 'catalog.json', '/style.css': 'style.css', '/vendor/niivue-0.58.0.js': 'vendor/niivue-0.58.0.js',
+          '/portal.js': 'portal.js', '/family.js': 'family.js', '/family.css': 'family.css', '/unlock.js': 'unlock.js', '/catalog.json': 'catalog.json', '/style.css': 'style.css', '/vendor/niivue-0.58.0.js': 'vendor/niivue-0.58.0.js',
           '/vendor/NIIVUE-LICENSE.txt': 'vendor/NIIVUE-LICENSE.txt'}
 
 

@@ -1,3 +1,4 @@
+import { showFamily } from './family.js?v=20261001-family1';
 import { unlockVault } from './unlock.js';
 import { Niivue } from './vendor/niivue-0.58.0.js';
 
@@ -98,7 +99,7 @@ async function decodePackage(p) {
   const dims=[size,size,p.framesBase64.length],spacing=[256/size,256/size,4];
   const brain=decodeBrain(p.brainExtraction,256*256*dims[2]);
   if(brain&&size===512){const mask=new Uint8Array(voxels.length);for(let z=0;z<dims[2];z++)for(let y=0;y<size;y++)for(let x=0;x<size;x++)mask[z*size*size+y*size+x]=brain.mask[z*65536+(y>>1)*256+(x>>1)];brain.mask=mask;}
-  return {buffer:nifti(voxels, dims, spacing), dims,spacing,brain,
+  return {buffer:nifti(voxels, dims, spacing), dims,spacing,brain,familyPackage:p,
     label:String(p.label || '本機顯示影像').slice(0,100), kind:'JPEG 堆疊',
     notice:'PACS 顯示圖片堆疊。體積比例為展示設定；方向、切片間距與毫米尺度未校準，不可用於距離或手術路徑判斷。',
     note:'未校準影像堆疊 · 非解剖比例'};
@@ -157,6 +158,7 @@ async function show(data) {
   document.title = 'Medical 3D · Brain Explorer';
   document.body.dataset.ready = 'true';
   status('已載入 · 本機顯示');
+  showFamily(data.familyPackage);
 }
 
 async function guarded(work) {
@@ -264,7 +266,7 @@ function drawSource(){
   ctx.putImageData(pixels,0,0);
 }
 
-async function start() {
+async function start(inputPackage,items=[]) {
   nv = new Niivue({backColor:[.03137,.05098,.07843,1],textHeight:0,isOrientationTextVisible:false,isOrientCube:false,isRuler:false,
     show3Dcrosshair:false,isColorbar:false,showLegend:false,dragAndDropEnabled:false,dragMode:0,multiplanarShowRender:1,
     crosshairColor:[.7,.86,.79,1],clipPlaneColor:[0,0,0,0],multiplanarLayout:2,crosshairWidth:1,forceDevicePixelRatio:Math.min(devicePixelRatio,1.5),loadingText:'',logLevel:'error'});
@@ -306,6 +308,7 @@ async function start() {
   $('clipAxis').onchange=()=>{clipping();faceCut();};$('clip').oninput=clipping;$('faceCut').onclick=faceCut;$('reset').onclick=()=>guarded(reset);
   document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{stopRotation();nv.setRenderAzimuthElevation(...({front:[0,0],side:[90,0],top:[0,90]})[b.dataset.view]);});
   nv.onLocationChange=syncSlices;
+  if(inputPackage){for(const d of items)catalog.set(d.id,d);await guarded(async()=>show(await decodePackage(inputPackage)));return;}
   const localHost=['localhost','127.0.0.1'].includes(location.hostname) || /^192\.168\./.test(location.hostname);
   let config;
   const r=await fetch(localHost?'./api/catalog':'./catalog.json',{cache:'no-store'});
@@ -319,12 +322,12 @@ async function start() {
       const password=$('password').value;$('password').value='';
       try{
         const items=await unlockVault(config.encrypted.url,$('username').value,password);
-        addDatasets(items);enter();$('lock').hidden=false;$('dataset').value=items[0].id;
-        await guarded(async()=>show(await decodePackage(items[0].data)));
+        addDatasets(items);enter();$('lock').hidden=false;$('dataset').value=items.at(-1).id;
+        await guarded(async()=>show(await decodePackage(items.at(-1).data)));
       }catch(error){$('loginStatus').textContent=error.message;}
       finally{$('unlock').disabled=false;}
     };
     $('lock').onclick=()=>location.reload();
-  }else{addDatasets(config.datasets||[]);enter();await guarded(()=>show(phantom()));}
+  }else{addDatasets(config.datasets||[]);enter();if(config.datasets?.length){$('dataset').value=config.datasets.at(-1).id;$('dataset').dispatchEvent(new Event('change'));}else await guarded(()=>show(phantom()));}
 }
-start().catch(e=>{$('loginStatus').textContent=e.message;$('empty').hidden=false;$('empty').textContent='無法啟動 3D 顯示。請使用支援 WebGL2 的 Safari／Chrome。';failure(e);});
+export async function openExplorer(p,items=[]){if(!nv)await start(p,items);else await guarded(async()=>show(await decodePackage(p)));}

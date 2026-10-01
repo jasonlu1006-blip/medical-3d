@@ -283,5 +283,116 @@
     "live_unlock_retested": false,
     "ipad_hardware_tested": false,
     "frame_rate_measured": false
+  },
+  "family_guide": {
+    "version": "family1",
+    "default_mode": "family",
+    "default_study": "latest",
+    "steps_per_study": 4,
+    "studies_checked": 2,
+    "viewport_checks": [
+      [
+        390,
+        844
+      ],
+      [
+        820,
+        1180
+      ],
+      [
+        1180,
+        820
+      ]
+    ],
+    "source_frames_preserved": 126,
+    "source_citation_packs_passed": 2,
+    "source_citation_check_is_clinical_approval": false,
+    "patient_or_family_usability_study": false,
+    "physical_ipad_test": false,
+    "integrity_tests_passed": 7,
+    "integrity_job": "2026-10-01T112501-7560cabb8edc",
+    "final_package_job": "2026-10-01T125541-cf79cdf1d008",
+    "controls_checked": [
+      "chapters",
+      "next",
+      "previous",
+      "date-switch",
+      "annotation-toggle",
+      "advanced-viewer",
+      "return-to-family"
+    ],
+    "deployment": {
+      "checked_at": "2026-10-01T05:57:26.857549+00:00",
+      "commit": "a7584dff590fbcd0dc3447a412cceb9d87e365aa",
+      "assets": [
+        {
+          "file": "index.html",
+          "bytes": 6944,
+          "sha256": "d0c773e02168a3aad9246ca2a5465fc5ecb00640d49bfce2dc0380e7552e806b",
+          "matches": true
+        },
+        {
+          "file": "portal.js",
+          "bytes": 2871,
+          "sha256": "5fb3e04e0fa18e32b2836c93b97387c2fee108d0614be2acdce47ace4cf25fda",
+          "matches": true
+        },
+        {
+          "file": "app.js",
+          "bytes": 24086,
+          "sha256": "f09f6bd01585a8420b7f00aef546e244e6dea897e487f58b3a46e8023ac99847",
+          "matches": true
+        },
+        {
+          "file": "family.js",
+          "bytes": 11837,
+          "sha256": "8f85f50ccad3d5ca210ed09b02c5dcf209f651d62f99f98fa44077ad170f4764",
+          "matches": true
+        },
+        {
+          "file": "family.css",
+          "bytes": 12028,
+          "sha256": "aaf1658d9d36609db31e859dae3be3ba32a3380a83c0ac661b0ff9ba38c30bc6",
+          "matches": true
+        },
+        {
+          "file": "style.css",
+          "bytes": 12069,
+          "sha256": "84ccc897db98b09b66dec89744efe3aeaf7c1a22810a0156cff8fea8b02b5793",
+          "matches": true
+        },
+        {
+          "file": "unlock.js",
+          "bytes": 1172,
+          "sha256": "0fc163f2f09c2ee34060295fbd7bba10bddf31dd7a92cfb46027c83724bae0c9",
+          "matches": true
+        },
+        {
+          "file": "catalog.json",
+          "bytes": 72,
+          "sha256": "84a865ffff254b1fe5fdc8bead7c664381ad5b52b0e5da768f1b6c5f2be643d5",
+          "matches": true
+        },
+        {
+          "file": "vault.bin",
+          "bytes": 9597048,
+          "sha256": "b97489e620c1a4c9a0b90a00f1cc4fda29bd80cef4bd36e2cbf55d97af701c40",
+          "matches": true
+        },
+        {
+          "file": "vendor/niivue-0.58.0.js",
+          "bytes": 2824071,
+          "sha256": "fc637d3b73d7937c7fb20a248f3b462daa68801739477ee7077e9285537e1f22",
+          "matches": true
+        },
+        {
+          "file": "vendor/NIIVUE-LICENSE.txt",
+          "bytes": 1316,
+          "sha256": "604be23eceeef93996165e2cd46eefd4d713f98f1b4a5414ab109516dc1b30bf",
+          "matches": true
+        }
+      ],
+      "all_match": true
+    }
   }
 }
