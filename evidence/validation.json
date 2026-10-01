@@ -1,6 +1,6 @@
 {
   "verified_at": "2026-10-01",
-  "status": "Preview 03 published; candidate brain segmentation and local rendering verified; HTTPS assets matched",
+  "status": "Explorer 04 published; immersive viewer and 512 display verified; HTTPS assets matched",
   "engine": "NiiVue 0.58.0",
   "unit_tests": {
     "passed": 7,
@@ -52,8 +52,8 @@
     },
     {
       "path": "web/app.js",
-      "bytes": 19578,
-      "sha256": "527e6e091f200b06d06c1097ba51c461acaed0dd95be57cc4aaf6ccaa3d7e80c"
+      "bytes": 23739,
+      "sha256": "353a06982fd80eae7869b9ed0874600a947be80749bfc2e88b97a368cccb839a"
     },
     {
       "path": "web/catalog.json",
@@ -62,13 +62,13 @@
     },
     {
       "path": "web/index.html",
-      "bytes": 5891,
-      "sha256": "794e62eda78a3372abaf73e462b4170e67b22efcfbec33f4992fa3d7e3b088ec"
+      "bytes": 6837,
+      "sha256": "f9584c8eb1967e428fa3d9b3a869c38dc3744f66e165d677b6df6594e0ff28e2"
     },
     {
       "path": "web/style.css",
-      "bytes": 8315,
-      "sha256": "9f53777c2e63b75a16cb7bd14c8485a18e75f53f5aff159ce883ce63ff277ec8"
+      "bytes": 12014,
+      "sha256": "304e0a703d2b2905568bb9eaf202a6e23bf60af959f11760512db3f109412344"
     },
     {
       "path": "web/unlock.js",
@@ -114,7 +114,7 @@
   "deployment": {
     "url": "https://jasonlu1006-blip.github.io/medical-3d/",
     "branch": "gh-pages",
-    "commit": "59c41045ffd60706948692999c79ca49c5e5dff6",
+    "commit": "d12395043943525f20c2e22248a21e5971d8d4f7",
     "pages_status": "built",
     "encryption": "AES-256-GCM; PBKDF2-SHA256 600000; random 16-byte salt and 12-byte IV",
     "credentials_persisted": false,
@@ -122,20 +122,20 @@
     "assets": [
       {
         "path": "index.html",
-        "bytes": 5891,
-        "sha256": "794e62eda78a3372abaf73e462b4170e67b22efcfbec33f4992fa3d7e3b088ec",
+        "bytes": 6837,
+        "sha256": "f9584c8eb1967e428fa3d9b3a869c38dc3744f66e165d677b6df6594e0ff28e2",
         "matches": true
       },
       {
         "path": "app.js",
-        "bytes": 19578,
-        "sha256": "527e6e091f200b06d06c1097ba51c461acaed0dd95be57cc4aaf6ccaa3d7e80c",
+        "bytes": 23739,
+        "sha256": "353a06982fd80eae7869b9ed0874600a947be80749bfc2e88b97a368cccb839a",
         "matches": true
       },
       {
         "path": "style.css",
-        "bytes": 8315,
-        "sha256": "9f53777c2e63b75a16cb7bd14c8485a18e75f53f5aff159ce883ce63ff277ec8",
+        "bytes": 12014,
+        "sha256": "304e0a703d2b2905568bb9eaf202a6e23bf60af959f11760512db3f109412344",
         "matches": true
       },
       {
@@ -181,7 +181,7 @@
     ],
     "hardware_tested": false,
     "browser_checks_verified_at": "2026-09-30 (initial encrypted login flow)",
-    "asset_hashes_verified_at": "2026-10-01 Preview 03"
+    "asset_hashes_verified_at": "2026-10-01 Explorer 04"
   },
   "brain_segmentation": {
     "method": "SynthStrip v1 experimental display-JPEG adapter",
@@ -226,5 +226,62 @@
     ],
     "encrypted_packaging_roundtrip": true,
     "live_login_retested": false
+  },
+  "explorer_v4": {
+    "render_dimensions": [
+      512,
+      512,
+      63
+    ],
+    "source_jpeg_dimensions_sampled": [
+      768,
+      768
+    ],
+    "display_spacing": [
+      0.5,
+      0.5,
+      4
+    ],
+    "max_display_voxels": 16777216,
+    "mask_upsampling": "nearest neighbour 2x XY; no new segmentation",
+    "original_vault_unchanged": true,
+    "new_anatomical_information_generated": false,
+    "rendering": [
+      "neutral procedural matcap",
+      "warm or gray gamma and gradient illumination",
+      "original grayscale option",
+      "source/review remains gray"
+    ],
+    "default": "isolated brain cutaway",
+    "local_ui_verified": [
+      "both MRI dates at 512 display",
+      "mask overlay and source alignment",
+      "source inset navigation",
+      "cutaway",
+      "three rendering styles",
+      "rotation starts and stops",
+      "six mode controls",
+      "four-view canvas does not overlap control dock",
+      "settings open and close",
+      "no error or warning logs"
+    ],
+    "viewports": [
+      [
+        1280,
+        720
+      ],
+      [
+        820,
+        1180
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "online_login_page_verified": true,
+    "live_unlock_retested": false,
+    "ipad_hardware_tested": false,
+    "frame_rate_measured": false
   }
 }
