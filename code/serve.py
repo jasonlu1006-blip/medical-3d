@@ -8,9 +8,11 @@ from urllib.parse import urlsplit
 
 WEB = Path(__file__).resolve().parents[1] / 'web'
 STATIC = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js',
-          '/portal.js': 'portal.js', '/family.js': 'family.js', '/family.css': 'family.css', '/unlock.js': 'unlock.js', '/catalog.json': 'catalog.json', '/style.css': 'style.css', '/vendor/niivue-0.58.0.js': 'vendor/niivue-0.58.0.js',
+          '/scene3d.js': 'scene3d.js', '/scene3d.css': 'scene3d.css', '/portal.js': 'portal.js', '/family.js': 'family.js', '/family.css': 'family.css', '/unlock.js': 'unlock.js', '/catalog.json': 'catalog.json', '/style.css': 'style.css', '/vendor/niivue-0.58.0.js': 'vendor/niivue-0.58.0.js',
           '/vendor/NIIVUE-LICENSE.txt': 'vendor/NIIVUE-LICENSE.txt'}
 
+for name in ['three.module.min.js','three.core.min.js','OrbitControls.js','LICENSE.txt']:
+    STATIC['/vendor/three-0.180.0/'+name]='vendor/three-0.180.0/'+name
 
 def make_handler(data_dir=None):
     datasets, paths = [], {}

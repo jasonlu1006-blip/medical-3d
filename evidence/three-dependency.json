@@ -1,0 +1,38 @@
+{
+  "name": "three",
+  "version": "0.180.0",
+  "license": "MIT",
+  "source": "https://github.com/mrdoob/three.js/tree/r180",
+  "runtime": "local self-hosted only; no external requests or case uploads",
+  "patch": "OrbitControls bare import changed to local three.module.min.js",
+  "files": [
+    {
+      "file": "three.module.min.js",
+      "source": "https://unpkg.com/three@0.180.0/build/three.module.min.js",
+      "bytes": 338908,
+      "source_sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6",
+      "local_sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6"
+    },
+    {
+      "file": "three.core.min.js",
+      "source": "https://unpkg.com/three@0.180.0/build/three.core.min.js",
+      "bytes": 381124,
+      "source_sha256": "61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de",
+      "local_sha256": "61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de"
+    },
+    {
+      "file": "OrbitControls.js",
+      "source": "https://unpkg.com/three@0.180.0/examples/jsm/controls/OrbitControls.js",
+      "bytes": 38719,
+      "source_sha256": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c",
+      "local_sha256": "6c860c6b342200f8aef65493319c12bfb2d652107355b1d25eb2154371128391"
+    },
+    {
+      "file": "LICENSE.txt",
+      "source": "https://unpkg.com/three@0.180.0/LICENSE",
+      "bytes": 1081,
+      "source_sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+      "local_sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+    }
+  ]
+}

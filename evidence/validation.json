@@ -1,7 +1,7 @@
 {
-  "verified_at": "2026-10-01",
-  "status": "Explorer 04 published; immersive viewer and 512 display verified; HTTPS assets matched",
-  "engine": "NiiVue 0.58.0",
+  "verified_at": "2026-10-02",
+  "status": "Spatial 3D default published; 17 HTTPS assets match deployment; browser UI verified locally",
+  "engine": "Three.js 0.180.0 (default), NiiVue 0.58.0 (advanced)",
   "unit_tests": {
     "passed": 7,
     "job_manifest": "/Volumes/EXTERNALSSD/FORGE/runtime/jobs/2026-09-30T232154-321d8dd1a002/manifest.json"
@@ -52,8 +52,8 @@
     },
     {
       "path": "web/app.js",
-      "bytes": 23743,
-      "sha256": "ae31e25ecc3223124b05438eea098b44848e87cee30ec6c82c04adb745feb18f"
+      "bytes": 24087,
+      "sha256": "6c81bb022db121971af3220f4ed0f229d7763797f81d2d7f85e895cf364ec517"
     },
     {
       "path": "web/catalog.json",
@@ -61,9 +61,34 @@
       "sha256": "84a865ffff254b1fe5fdc8bead7c664381ad5b52b0e5da768f1b6c5f2be643d5"
     },
     {
+      "path": "web/family.css",
+      "bytes": 12028,
+      "sha256": "aaf1658d9d36609db31e859dae3be3ba32a3380a83c0ac661b0ff9ba38c30bc6"
+    },
+    {
+      "path": "web/family.js",
+      "bytes": 12067,
+      "sha256": "62935f695adf3d3d2b4194546c43cf7ff45c7d4bf29c307729fdb11887a34c2d"
+    },
+    {
       "path": "web/index.html",
-      "bytes": 6837,
-      "sha256": "b2e19fe30f607fff451f18478e443d8bae3f7c84df9dc9da654217c641b55ccf"
+      "bytes": 6995,
+      "sha256": "0008a225725e8ccb7a8d7afae215737bd57dd0f05ca4e6ccce3e2e978799df1f"
+    },
+    {
+      "path": "web/portal.js",
+      "bytes": 3131,
+      "sha256": "9733d317217cd7f2e6ac91cc97cd3a9a9833860ad8b887809eb0ab6cd293af48"
+    },
+    {
+      "path": "web/scene3d.css",
+      "bytes": 10150,
+      "sha256": "193b62826eac9662579c76ff5fbe8234624528665ee6081a54c12432d6390bc0"
+    },
+    {
+      "path": "web/scene3d.js",
+      "bytes": 16027,
+      "sha256": "e2dd78ed196a27980d0f21ae8c9d9410377d437abbe1cec9a8de265e47071881"
     },
     {
       "path": "web/style.css",
@@ -86,29 +111,24 @@
       "sha256": "fc637d3b73d7937c7fb20a248f3b462daa68801739477ee7077e9285537e1f22"
     },
     {
-      "path": "code/encrypt_demo.mjs",
-      "bytes": 1896,
-      "sha256": "3e34081504d6041c4dac7098c72cc1a6100bfc7d10e712fc33a543e257b7ff90"
+      "path": "web/vendor/three-0.180.0/LICENSE.txt",
+      "bytes": 1081,
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
     },
     {
-      "path": "code/extract_brain.py",
-      "bytes": 7834,
-      "sha256": "b636175f234d5d05e329b95e65003d2e71970f2d491fcb0d087ab7afff70af0b"
+      "path": "web/vendor/three-0.180.0/OrbitControls.js",
+      "bytes": 38719,
+      "sha256": "6c860c6b342200f8aef65493319c12bfb2d652107355b1d25eb2154371128391"
     },
     {
-      "path": "code/prepare_display_stack.py",
-      "bytes": 3741,
-      "sha256": "88a9b2153852b8afa95a36dd7f9154332695d2608e6da18af948e1a8f55961c8"
+      "path": "web/vendor/three-0.180.0/three.core.min.js",
+      "bytes": 381124,
+      "sha256": "61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de"
     },
     {
-      "path": "code/serve.py",
-      "bytes": 3214,
-      "sha256": "bf3f83149acce80e8f18464f0cacc49045022571faf2f2c771b4f61a8189951e"
-    },
-    {
-      "path": "code/test_integrity.py",
-      "bytes": 2974,
-      "sha256": "a4ddc79e7fe7ef6c5f0842db886d40c9311ee744c7e2138ae9500c261a37bb22"
+      "path": "web/vendor/three-0.180.0/three.module.min.js",
+      "bytes": 338908,
+      "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6"
     }
   ],
   "deployment": {
@@ -394,5 +414,164 @@
       ],
       "all_match": true
     }
+  },
+  "spatial_3d": {
+    "version": "20261002-spatial1",
+    "default": "latest study / cutaway volume",
+    "rendering": "WebGL2 3D texture ray marching of original JPEG signal within existing candidate brain mask",
+    "display_dimensions": [
+      512,
+      512,
+      63
+    ],
+    "ray_steps": 192,
+    "original_vault_unchanged": true,
+    "tumor_segmentation": false,
+    "physical_geometry_validated": false,
+    "ipad_hardware_tested": false,
+    "frame_rate_measured": false,
+    "viewports": [
+      [
+        390,
+        844
+      ],
+      [
+        820,
+        1180
+      ],
+      [
+        1180,
+        820
+      ]
+    ],
+    "integrity_tests_passed": 7,
+    "integrity_job": "2026-10-02T224857-5d9cb1531fd4",
+    "browser_checks": [
+      "two separate MRI dates",
+      "three rendering modes",
+      "manual drag rotation changes perspective",
+      "slice slider changes source and 3D plane",
+      "locator hides outside reference slice",
+      "return to reference slice",
+      "family report navigation and return to 3D",
+      "no browser error/warning logs"
+    ],
+    "live_unlock_retested": false,
+    "deployment": {
+      "checked_at": "2026-10-02T14:53:55.391982+00:00",
+      "commit": "becf6febd5619c0ebf1db095061e32fe59647697",
+      "assets": [
+        {
+          "file": "index.html",
+          "bytes": 6995,
+          "sha256": "0008a225725e8ccb7a8d7afae215737bd57dd0f05ca4e6ccce3e2e978799df1f",
+          "matches": true
+        },
+        {
+          "file": "portal.js",
+          "bytes": 3131,
+          "sha256": "9733d317217cd7f2e6ac91cc97cd3a9a9833860ad8b887809eb0ab6cd293af48",
+          "matches": true
+        },
+        {
+          "file": "app.js",
+          "bytes": 24087,
+          "sha256": "6c81bb022db121971af3220f4ed0f229d7763797f81d2d7f85e895cf364ec517",
+          "matches": true
+        },
+        {
+          "file": "family.js",
+          "bytes": 12067,
+          "sha256": "62935f695adf3d3d2b4194546c43cf7ff45c7d4bf29c307729fdb11887a34c2d",
+          "matches": true
+        },
+        {
+          "file": "family.css",
+          "bytes": 12028,
+          "sha256": "aaf1658d9d36609db31e859dae3be3ba32a3380a83c0ac661b0ff9ba38c30bc6",
+          "matches": true
+        },
+        {
+          "file": "style.css",
+          "bytes": 12069,
+          "sha256": "84ccc897db98b09b66dec89744efe3aeaf7c1a22810a0156cff8fea8b02b5793",
+          "matches": true
+        },
+        {
+          "file": "unlock.js",
+          "bytes": 1172,
+          "sha256": "0fc163f2f09c2ee34060295fbd7bba10bddf31dd7a92cfb46027c83724bae0c9",
+          "matches": true
+        },
+        {
+          "file": "catalog.json",
+          "bytes": 72,
+          "sha256": "84a865ffff254b1fe5fdc8bead7c664381ad5b52b0e5da768f1b6c5f2be643d5",
+          "matches": true
+        },
+        {
+          "file": "vault.bin",
+          "bytes": 9597048,
+          "sha256": "b97489e620c1a4c9a0b90a00f1cc4fda29bd80cef4bd36e2cbf55d97af701c40",
+          "matches": true
+        },
+        {
+          "file": "vendor/niivue-0.58.0.js",
+          "bytes": 2824071,
+          "sha256": "fc637d3b73d7937c7fb20a248f3b462daa68801739477ee7077e9285537e1f22",
+          "matches": true
+        },
+        {
+          "file": "vendor/NIIVUE-LICENSE.txt",
+          "bytes": 1316,
+          "sha256": "604be23eceeef93996165e2cd46eefd4d713f98f1b4a5414ab109516dc1b30bf",
+          "matches": true
+        },
+        {
+          "file": "scene3d.js",
+          "bytes": 16027,
+          "sha256": "e2dd78ed196a27980d0f21ae8c9d9410377d437abbe1cec9a8de265e47071881",
+          "matches": true
+        },
+        {
+          "file": "scene3d.css",
+          "bytes": 10150,
+          "sha256": "193b62826eac9662579c76ff5fbe8234624528665ee6081a54c12432d6390bc0",
+          "matches": true
+        },
+        {
+          "file": "vendor/three-0.180.0/three.module.min.js",
+          "bytes": 338908,
+          "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6",
+          "matches": true
+        },
+        {
+          "file": "vendor/three-0.180.0/three.core.min.js",
+          "bytes": 381124,
+          "sha256": "61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de",
+          "matches": true
+        },
+        {
+          "file": "vendor/three-0.180.0/OrbitControls.js",
+          "bytes": 38719,
+          "sha256": "6c860c6b342200f8aef65493319c12bfb2d652107355b1d25eb2154371128391",
+          "matches": true
+        },
+        {
+          "file": "vendor/three-0.180.0/LICENSE.txt",
+          "bytes": 1081,
+          "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+          "matches": true
+        }
+      ],
+      "all_match": true
+    },
+    "online_login_page_verified": true,
+    "known_limitations": [
+      "display JPEG and assumed spacing; no verified patient coordinate system",
+      "candidate brain mask may omit tissue",
+      "no precise tumor mesh or surgical simulation",
+      "physical iPad and family usability not tested"
+    ]
   }
 }

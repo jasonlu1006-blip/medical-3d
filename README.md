@@ -1,6 +1,6 @@
 # Medical 3D
 
-更新：2026-10-01。預設改為家屬四步解說：位置示意 → MRI 閱讀定位 → 白話報告 → 病歷記載的治療階段。病例解說和影像一起加密；載入家屬版不需要 WebGL，進階 3D 工具按需載入。
+更新：2026-10-02。預設為可旋轉的 MRI 立體剖面。主畫面提供「剖開看裡面」「完整看大腦」「透明看位置」，原片、閱讀定位框與切片滑桿同步；白話報告與治療說明由主畫面進入。病例解說和影像一起加密；立體主畫面使用 WebGL2，進階 NiiVue 工具按需載入。
 
 目標：把 CT／MRI 轉為可在 Jason 的 M2 iPad Safari 操作的三維影像，逐步加入分割、剖切、路徑標記與教學模擬。平板確切尺寸及 iPadOS 版本待實機確認。重建與較重運算放 Mac，平板以瀏覽和互動為主；實測前不承諾幀率。
 
@@ -16,7 +16,7 @@
 | [NiiVue](https://github.com/niivue/niivue) | 適合客製平板介面，支援體積、mesh 與 WebGL2；DICOM 支援走插件，先轉 NIfTI 可簡化前端。 | BSD-2-Clause；2026-08-18 更新。官方正在遷移 niivue/mono，實作時須選定並鎖版本。 |
 | [SlicerSOFA](https://github.com/Slicer/SlicerSOFA)／[SOFA](https://www.sofa-framework.org/) | 後續組織變形與互動力學模擬；需分割、網格、材料與邊界條件，不會只憑 MRI 自動得到可靠的手術模擬。 | SlicerSOFA MIT；SOFA LGPL；插件授權分別核對。 |
 
-上列維護日期是查核時 GitHub pushed_at，並非品質或穩定性認證。已採用 NiiVue 0.58.0，來源與 npm 完整性校驗在 `evidence/niivue-dependency.json`；其他候選尚未安裝。
+上列維護日期是查核時 GitHub pushed_at，並非品質或穩定性認證。已採用 NiiVue 0.58.0 與 Three.js 0.180.0；来源及授權收據分別在 `evidence/niivue-dependency.json`、`evidence/three-dependency.json`。其他候選尚未安裝。
 
 slicer-skill 上游 setup.sh 估計 full 約 15 GB、lightweight 約 1 GB、web 幾乎不需下載；這些是上游估計，非本機實測。實際脚本在 lightweight 也會取得 ProjectWeek，因此採用前應另算容量。它的 MCP 能任意執行 Slicer Python，不直接對平板或區網暴露這個控制端點。資料流：公開文件查詢只送公開關鍵字；病例處理沿用當次虛擬資料允許本機＋雲端的範圍，未知新來源重新判斷。
 
@@ -69,7 +69,7 @@ python3 -B code/serve.py
 
 已有候選腦部分割；尚無配準、路徑標記、組織切割、變形或臨床導航。JPEG 體積邊緣雜訊與幾何比例限制保留在介面中，不能把此展示當作精確 MRI 重建。
 
-線上驗收：Pages `gh-pages` 部署成功，8 個線上資產 SHA-256 與發布檔一致；正確／錯誤帳密、兩個日期切換、鎖定回登入頁、390×844 手機及 820×1180 平板 viewport 已驗證。實際手機與 M2 iPad Safari 仍待裝置測試。發布檔 `vault.bin` 只含加密的兩組展示影像；明文包和來源追溯收據留在病例目錄。
+線上驗收：Pages `gh-pages` 部署及資產 SHA-256 回讀記錄見 `evidence/validation.json`。早期版本曾驗證正確／錯誤帳密、鎖定回登入頁；此次沿用相同加密檔，未重新輸入或重播登入密碼。實際手機與 M2 iPad Safari 仍待裝置測試。發布檔 `vault.bin` 只含加密的兩組展示影像；明文包和來源追溯收據留在病例目錄。
 
 
 ## 候選腦部分割
@@ -92,8 +92,17 @@ python3 -B code/serve.py
 
 ## 家屬解說
 
-`web/portal.js` 先解密病例包，再由 `family.js` 顯示四頁。預設最新檢查；兩個日期各自有來源核對的解說、代表切片和閱讀定位框。手機／直向平板先呈現標題與圖片，再呈現補充說明。定位框不是腫瘤分割，解剖插圖不是病人 3D 模型；計畫與已完成治療明確區分。一般手術原則參照 NCI 病人版 CNS tumors PDQ。
+`web/portal.js` 先解密病例包，再由 `scene3d.js` 顯示立體剖面。按「報告與治療說明」由 `family.js` 顯示四頁；各頁左上角可返回立體畫面。預設最新檢查；兩個日期各自有來源核對的解說、代表切片和閱讀定位框。手機／直向平板先呈現標題與圖片，再呈現補充說明。定位框不是腫瘤分割，解剖插圖不是病人 3D 模型；計畫與已完成治療明確區分。一般手術原則參照 NCI 病人版 CNS tumors PDQ。
 
 `code/build_family.py --source-dir <packages> --content <case-content.json> --output-dir <new-output>` 透過 safe_run 產生版本化派生包，驗證全部原始 JPEG bytes 不變。內容、引用及檢查截图在病例 `medical-3d/family-v1/` 與 `qa-family-v1/`；程式庫不保存病例明文。來源引用以 FORGE patient_evidence_pack/citation_gate 核對；此核對不等於臨床批准。
 
 已檢查四章節、兩日期、手機390×844及平板820×1180／1180×820的瀏覽器排版、定位框切換、返回和進階入口。這是瀏覽器 viewport 與內容自查，未宣稱家屬理解度實驗或 iPad 實機測試。
+
+
+## 立體解說主畫面
+
+`scene3d.js` 使用自架 Three.js 0.180.0 與 WebGL2 3D texture ray marching，直接渲染候選腦部遮罩內的 MRI 訊號。主畫面不是預錄旋轉圖，也不是通用頭部模型；可拖曳改變視角、縮放、顯示完整體积或半透明體積、逐張移動剖面。代表層的定位矩形由同一原片座標轉到展示空間，離開代表層即隱藏，避免在其他層面誤畫病灶。剖面在同一 ray marcher 內合成，避免透明物件排序遮住內部。
+
+預設最新檢查的剖切模式；初次載入有限旋轉 6 秒（尊重 reduced-motion），觸碰或切換控制即停止。背景與離開主畫面停止繪圖；切換日期釋放舊紋理與場景。畫面排程上限 30 fps，手機像素比上限 1，平板／桌面 1.35；不是實機幀率保證。每份 63 張時顯示紋理為 512×512×63，約 16 MiB，仍是原 JPEG 顯示訊號、任意 Z 展示間距與候選遮罩，沒有恢復 DICOM 幾何、創造腫瘤邊界或實作手術模擬。
+
+目前瀏覽器驗收涵蓋兩份影像、三種模式、手動拖曳旋轉、原片／剖面換層、參考層定位框隱藏與返回、跨報告頁後返回立體主畫面。已檢視 390×844、820×1180、1180×820 的實際 WebGL 畫面；實體 M2 iPad Safari 尚未測試。畫面收據在病例 `medical-3d/qa-spatial-v1/`。
